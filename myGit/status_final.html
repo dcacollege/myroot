@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		* {
+			margin:0;
+			padding:0;
+			box-sizing:border-box;
+		}
+		#container {
+			background-color:#4070f4;
+			min-height:100vh;
+			border-radius:20px;
+			display:flex;
+			justify-content:center;
+			align-items:center;
+		}
+		.blockquote {
+			max-width:500px;
+			min-height:300px;
+			max-height:300px;
+			overflow:hidden;
+			padding:25px;
+			background:#f8fffe;
+			border-left:1px solid orange;
+			box-shadow:0 0 15px 7px rgba(0,0,0,0.1);
+		}
+		.blockquote_bordered {
+			//border-left-width:10px;
+			//border-radius:5px;
+		}
+		.blockquote_background {
+			background-color:orange;
+			//color:#f8fffe;
+		}
+		.blockquote_text {
+			font-family:Raleway, sans-serif;
+			font-size:1.15em;
+			line-height:1.5;
+			margin:20px;
+		}
+		.blockquote_text_credit {
+			text-align:right;
+		}
+		.blockquote_text_credit::before {
+			content:"\2014\0020";
+		}
+		figure {
+			position:relative;
+			min-height:100px;
+			min-width:100px;
+			border-radius:50%;
+			background-image: url("images/avatar1.png");
+			background-size:cover;
+			background-repeat:no-repeat;
+		}
+		figcaption {
+			position:absolute;
+			bottom:0;
+			width:100%;
+			text-align:center;
+			font-family:Raleway, sans-serif;
+			font-size:1.5em;
+			border:1px solid red;
+		}
+		span {
+			color:#fff;
+			padding:8px 16px;
+		}
+		.blockquote_p {
+			margin:10px;
+		}
+		@media only screen and (max-width: 600px) {
+			#container {
+				flex-direction:column;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div class="blockquote blockquote_background" style="display:flex;justify-content:center;align-items:center;">
+			<figure></figure>
+			<div class="blockquote_text">
+				<p class="blockquote_p">Name: <span>xxx</span></p>
+				<p class="blockquote_p">Score: <span>xxx</span></p>
+				<p class="blockquote_p">Status: <span>xxx</span></p>
+			</div>
+		</div>
+		
+		<blockquote class="blockquote blockquote_bordered">
+			<p class="blockquote_text">xxxxxxxxxxxxxx</p>
+			<p class="blockquote_text blockquote_text_credit">Vincent Ikape<br/><small>Principal</small></p>
+		</blockquote>
+	</div>
+	<script>
+		var span = document.querySelector('span');
+		var name_elem = document.querySelectorAll('.blockquote_p span')[0];
+		var score_elem = document.querySelectorAll('.blockquote_p span')[1];
+		var status_elem = document.querySelectorAll('.blockquote_p span')[2];
+		var quote = document.querySelectorAll('.blockquote_text')[1];
+		var [true_codes, first_names, last_names, scores, statuss, local_key] = [[],[],[],[],[],localStorage.getItem('userIndex')];
+		
+		fetch('https://script.google.com/macros/s/AKfycbwUu8zwSvGIG0oqVluoJJGehT76BOpdZ-Xu72hwSw576wwNQ5yiURxgt2zJ4_gSFRFXSA/exec'/*, {
+			method:"GET",
+			mode:"no-cors"
+		}*/)
+		.then(res => res.json())
+		.then(data => {
+			for(i = 0; i < data.appRegion.length; i++) {
+                true_codes[i] = data.appRegion[i][0];
+                first_names[i] = data.appRegion[i][2];
+                last_names[i] = data.appRegion[i][3];
+                scores[i] = data.appRegion[i][5];
+                statuss[i] = data.appRegion[i][6];
+            }
+			name_elem.innerText = `${first_names[true_codes.indexOf(local_key)]} ${last_names[true_codes.indexOf(local_key)]}` ;
+			score_elem.innerText = scores[true_codes.indexOf(local_key)] + "%";
+			status_elem.innerText = statuss[true_codes.indexOf(local_key)];
+			
+			switch (statuss[true_codes.indexOf(local_key)]) {
+				case "Admitted":
+					quote.innerText = data.appQuote.granted;
+					break;
+				case "Denied":
+					quote.innerText = data.appQuote.denied;
+					break;
+				default:
+					quote.innerText = data.appQuote.awaiting;
+			}
+		})
+		
+	</script>
+</body>
+</html>
